@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Books } from 'src/books/entities/books.entity';
 import { User } from 'src/user/entities/user.entity';
 
 export const typeORMConfig: TypeOrmModuleOptions = {
@@ -8,6 +9,6 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   username: 'root',
   password: '',
   database: 'book_store',
-  entities: [User], // Entity 연결
-  synchronize: false,
+  entities: [User, Books], // Entity 연결
+  synchronize: true,
 };
