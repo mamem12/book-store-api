@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-  userList : CreateUserDto[] = [];
-
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     
-    console.log(createUserDto)
+    const email = createUserDto.email
 
-    const user = this.userList.filter((user) => user.email === createUserDto.email)
+    const existUser = await this.usersRepository.createQueryBuilder("user")
+    .select()
+    .where("user.email = :email", {email})
+    .getRawOne()
+
     // 회원가입 중복처리
-    if(user.length <= 0) {
-      this.userList.push(createUserDto);
-    } else {
+    if(existUser) {
       return "중복된 이메일입니다."
+    } else {
+      this.usersRepository.createQueryBuilder("user")
+      .insert()
+      .into(User)
+      .values([createUserDto])
+      .execute()
+      ;
     }
     
-    console.log(this.userList)
-
     return 'This action adds a new user';
   }
 
@@ -28,8 +40,12 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    
+    return this.usersRepository.createQueryBuilder("user")
+    .select()
+    .where("user.id = :id", {id})
+    .getRawOne()
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
