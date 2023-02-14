@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from "typeorm";
-import { User } from "./entities/user.entity";
+import { Users } from "./entities/user.entity";
 // import { AuthenticationService } from './authentication/authentication.service';
 // import { CreateUserDto } from './dto/create-user.dto';
 
@@ -9,8 +9,8 @@ import { User } from "./entities/user.entity";
 export class UsersService {
 
   constructor(
-    @InjectRepository(User)
-      private usersRepository: Repository<User>,
+    @InjectRepository(Users)
+      private usersRepository: Repository<Users>,
   ) {}
 
   async getUser(email : string, password : string) {

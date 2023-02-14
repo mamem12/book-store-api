@@ -19,6 +19,6 @@ export class Books {
     @Column({type: 'int', comment: '책 등록 user id'})
     public user_id: number;
 
-    @Column({type: 'varchar', length:1000, comment: '책 표지 이미지 Binary'})
+    @Column({type: 'varchar', comment: '책 표지 이미지 Binary'})
     public image : string;
 }

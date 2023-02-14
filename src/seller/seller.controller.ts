@@ -1,5 +1,6 @@
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Request } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { BooksService } from 'src/books/books.service';
 import { CreateBooksDto } from 'src/books/dto/create-books.dto';
 
@@ -11,15 +12,29 @@ export class SellerController {
     ) {}
 
     // 등록
+    @UseGuards(JwtAuthGuard)
     @Post("/regbooks")
-    @UseInterceptors(FilesInterceptor("image"))
-    regBooks(@Body() booksCreateDto : CreateBooksDto, @UploadedFiles() file : Array<Express.Multer.File>) {
-    // regBooks(@UploadedFiles() file : Express.Multer.File) {
-        console.log(file)
-        return "success"
-        // return this.booksService.regBooks(booksCreateDto)
+    @UseInterceptors(FileInterceptor("image"))
+    regBooks(@Body() createbooksDto : CreateBooksDto, @UploadedFile() file : Express.Multer.File, @Request() req) {
+        // const base64 = file.buffer.toString("base64")
+
+        createbooksDto.image = file.filename;
+        createbooksDto.user_id = req.user.userId;
+        console.log(createbooksDto)
+        return this.booksService.regBooks(createbooksDto)
     }
 
     // 재고 확인
+    @UseGuards(JwtAuthGuard)
+    @Get("/stocks/:id")
+    stock(@Request() req) {
+        return this.booksService.stocks(0)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("/stocks/")
+    allStocks(@Request() req) {
+        return this.booksService.stocks(0)
+    }
 
 }

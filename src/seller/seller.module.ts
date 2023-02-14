@@ -6,6 +6,7 @@ import { SellerController } from './seller.controller';
 
 @Module({
   controllers: [SellerController],
-  imports : [BooksModule, MulterModule.register()]
+  imports : [BooksModule, MulterModule.register({dest:"./images"})]
+  // imports : [BooksModule, MulterModule.register()]
 })
 export class SellerModule {}
