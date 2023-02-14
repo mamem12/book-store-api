@@ -1,58 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { HttpException, Injectable } from '@nestjs/common';
+import { AuthenticationService } from './authentication/authentication.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
+
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private authentication: AuthenticationService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    
-    const email = createUserDto.email
+  async register(createUserDto: CreateUserDto) {
 
-    const existUser = await this.usersRepository.createQueryBuilder("user")
-    .select()
-    .where("user.email = :email", {email})
-    .getRawOne()
-
-    // 회원가입 중복처리
-    if(existUser) {
-      return "중복된 이메일입니다."
-    } else {
-      this.usersRepository.createQueryBuilder("user")
-      .insert()
-      .into(User)
-      .values([createUserDto])
-      .execute()
-      ;
+    try {
+        const result = await this.authentication.register(createUserDto);
+    } catch (error) {
+        if (error instanceof HttpException) {
+          return error;
+        } else {
+          console.error(error.stack)
+        }
     }
+
+    return 'adds a new user';
+  }
+
+  login(createUserDto: CreateUserDto) {
+    throw new Error('Method not implemented.');
+  }
+
+  // async findOne(id: number) {
     
-    return 'This action adds a new user';
-  }
+  //   return this.usersRepository.createQueryBuilder("user")
+  //   .select()
+  //   .where("user.id = :id", {id})
+  //   .getRawOne()
+  // }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  async findOne(id: number) {
-    
-    return this.usersRepository.createQueryBuilder("user")
-    .select()
-    .where("user.id = :id", {id})
-    .getRawOne()
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 }
