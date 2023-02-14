@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './config/typeorm.config';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './user/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forRoot(typeORMConfig)],
+  imports: [UsersModule, TypeOrmModule.forRoot(typeORMConfig), AuthModule],
   controllers: [],
   providers: [],
 })
 export class AppModule {
-    // constructor(private dataSource: DataSource) {}
 }
