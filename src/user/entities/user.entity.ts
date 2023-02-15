@@ -16,7 +16,7 @@ export class Users {
     @Column({type: 'varchar', length: 20, comment: '유저 비밀번호'})
     public password: string;
 
-    @Column({default : 100, type: 'bigint', comment: '유저 포인트'})
+    @Column({default : 100, type: 'int', comment: '유저 포인트'})
     public point : number;
 
     @Column({default : "c", type: 'char', length: 1, comment: '유저 유형'})

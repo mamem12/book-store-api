@@ -46,7 +46,7 @@ export class OrdersService {
         if(user.point < totalPrice){
             return new HttpException("잔고 부족", HttpStatus.FORBIDDEN)
         } else {
-            console.log("재고 있음")
+            console.log("잔고 있음")
         }
         
         // 구매 책 재고 --
@@ -77,6 +77,67 @@ export class OrdersService {
         })
         .execute();
 
-        return "test"
+        return "success"
+    }
+
+    async cancel(order_id : number, user_id : number) {
+        console.log(user_id)
+        console.log(order_id)
+
+        const order = await this.ordersRepository.createQueryBuilder("order")
+        .select()
+        .where("id = :order_id", {order_id})
+        .andWhere("user_id = :user_id", {user_id})
+        .getOne();
+
+        if (!order) {
+            return new HttpException("유효하지 않은 거래입니다.", HttpStatus.FORBIDDEN)
+        }
+
+        const book_id = order.book_id;
+        
+        const bookInfo = await this.booksRepository.createQueryBuilder("book")
+        .select()
+        .where("id = :book_id",{book_id})
+        .getOne();
+
+        const userInfo = await this.usersRepository.createQueryBuilder("user")
+        .select()
+        .where("id = :user_id", {user_id})
+        .getOne();
+
+        // 책 재고 반환
+        const reAmount = bookInfo.amount + order.amount;
+
+        await this.booksRepository.createQueryBuilder("book")
+        .update()
+        .set({"amount" : reAmount})
+        .where("id = :book_id", {book_id})
+        .execute();
+
+        // 포인트 반환
+        console.log(`book price ${bookInfo.price}`)
+        console.log(`order amount ${order.amount}`)
+        console.log(`user have point ${userInfo.point}`)
+        
+        const totalOrderPoint = bookInfo.price * order.amount;
+        console.log(`total order price ${totalOrderPoint}`);
+        
+        const rePoint = userInfo.point + totalOrderPoint;
+        console.log(`return point ${rePoint}`)
+
+        await this.usersRepository.createQueryBuilder("user")
+        .update()
+        .set({point: rePoint})
+        .where("id = :user_id", {user_id})
+        .execute();
+        
+        // 주문 취소 확정
+        await this.ordersRepository.createQueryBuilder("order")
+        .update()
+        .set({amount : 0, stat : "C"})
+        .execute();
+
+        return "success"
     }
 }
