@@ -33,7 +33,8 @@ export class SellerController {
         
         return this.booksService.stocksById(req.user.userId, booksId)
     }
-
+    
+    // 전체 재고 확인
     @UseGuards(JwtAuthGuard)
     @Get("/stocks/")
     stockㄴ(@Request() req) {

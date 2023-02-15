@@ -45,8 +45,6 @@ export class BooksService {
 
         }
 
-
-
         return "success"
 
     }
@@ -69,7 +67,5 @@ export class BooksService {
 
         return stockResult;
     }
-
-
 
 }

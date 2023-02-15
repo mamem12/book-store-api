@@ -9,7 +9,7 @@ export class CustomerController {
         private readonly ordersService : OrdersService,
     ) {}
         
-    // - 주문
+    // 주문
     @Post("/order")
     @UseGuards(JwtAuthGuard)
     order(@Body() order : Orders, @Req() req) {
@@ -17,21 +17,21 @@ export class CustomerController {
         order.user_id = req.user.userId;
         return this.ordersService.order(order);
     }
-    // - 주문취소
+    // 주문 취소
     @Delete("/cancel/:id")
     @UseGuards(JwtAuthGuard)
     cancel(@Param("id") order_id : number, @Req() req) {
         
         return this.ordersService.cancel(order_id, req.user.userId)
     }
-    // - 주문목록
+    // 주문목록
     @Get("/orderlist")
     @UseGuards(JwtAuthGuard)
     orderList(@Req() req) {
         
         return this.ordersService.orderList(req.user.userId)
     }
-
+    // 개별 주문 목록
     @Get("/orderlist/:orderId")
     @UseGuards(JwtAuthGuard)
     orderById(@Req() req, @Param("orderId") orderId : number) {

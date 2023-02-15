@@ -3,8 +3,9 @@ import { Books } from 'src/books/entities/books.entity';
 import { Orders } from 'src/order/entities/orders.entity';
 import { Users } from 'src/user/entities/user.entity';
 
+//Database 설정
 export const typeORMConfig: TypeOrmModuleOptions = {
-  type: 'mysql', //Database 설정
+  type: 'mysql', 
   host: 'localhost',
   port: 3306,
   username: 'root',

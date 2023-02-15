@@ -12,7 +12,4 @@ import { OrdersService } from './orders.service';
     TypeOrmModule.forFeature([Orders, Books, Users]),
   ]
 })
-export class OrdersModule {
-    
-  
-}
+export class OrdersModule {}
