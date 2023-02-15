@@ -1,9 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateBooksDto } from 'src/books/dto/create-books.dto';
 import { Repository } from "typeorm";
+import { CreateUserDto } from './dto/create-users.dto';
 import { Users } from "./entities/user.entity";
-// import { AuthenticationService } from './authentication/authentication.service';
-// import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +22,36 @@ export class UsersService {
       .getRawOne();
 
       return resultUser;
+  }
+
+  async signUp(createUserDto : CreateUserDto) {
+
+    const email = createUserDto.email
+    const existUser = await this.usersRepository.createQueryBuilder("user")
+      .select()
+      .where("user.email = :email", {email})
+      .getRawOne();
+    
+    if (existUser) {
+
+      throw new HttpException("이미 가입한 유저입니다.", HttpStatus.CONFLICT)
+
+    } else {
+
+      this.usersRepository.createQueryBuilder("user")
+      .insert()
+      .into(Users)
+      .values({
+        email : createUserDto.email,
+        category : createUserDto.category,
+        password : createUserDto.password,
+        name : createUserDto.name
+      })
+      .execute();
+
+    }
+
+    return "success";
   }
 
   

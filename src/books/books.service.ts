@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -22,9 +22,6 @@ export class BooksService {
             .where("user.id = :id", {id})
             .getOne();
 
-        console.log(isSeller)
-        console.log(isSeller.category)
-
         if(isSeller.category && isSeller.category == "s") {
             
             await this.booksRepository.createQueryBuilder("books")
@@ -41,7 +38,7 @@ export class BooksService {
             
         } else {
 
-            return "fail"
+            throw new HttpException("권한이 없습니다.", HttpStatus.FORBIDDEN)
 
         }
 
