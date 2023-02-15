@@ -130,4 +130,20 @@ export class OrdersService {
 
         return "success"
     }
+
+    async orderList(user_id : number) {
+
+        return this.ordersRepository.createQueryBuilder("order")
+        .select()
+        .where("user_id = :user_id", {user_id})
+        .getMany();
+    }
+
+    async orderById(user_id : number, order_id : number) {
+        return this.ordersRepository.createQueryBuilder("order")
+        .select()
+        .where("user_id = :user_id", {user_id})
+        .andWhere("id = :order_id", {order_id})
+        .getOne();
+    }
 }
