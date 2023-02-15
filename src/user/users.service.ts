@@ -26,7 +26,17 @@ export class UsersService {
 
   async signUp(createUserDto : CreateUserDto) {
 
-    const email = createUserDto.email
+    
+    const email = createUserDto.email;
+    const password = createUserDto.password;
+    const name = createUserDto.name;
+
+    if (!email || !password || !name) {
+      
+      throw new HttpException("유효하지 않은 요청입니다.", HttpStatus.BAD_REQUEST)
+
+    }
+
     const existUser = await this.usersRepository.createQueryBuilder("user")
       .select()
       .where("user.email = :email", {email})
@@ -37,17 +47,17 @@ export class UsersService {
       throw new HttpException("이미 가입한 유저입니다.", HttpStatus.CONFLICT)
 
     } else {
-
+      
       this.usersRepository.createQueryBuilder("user")
-      .insert()
-      .into(Users)
-      .values({
-        email : createUserDto.email,
-        category : createUserDto.category,
-        password : createUserDto.password,
-        name : createUserDto.name
-      })
-      .execute();
+        .insert()
+        .into(Users)
+        .values({
+          email : createUserDto.email,
+          category : createUserDto.category,
+          password : createUserDto.password,
+          name : createUserDto.name
+        })
+        .execute();
 
     }
 

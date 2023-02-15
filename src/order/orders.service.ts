@@ -22,17 +22,15 @@ export class OrdersService {
         const book_id = orders.book_id;
         const user_id = orders.user_id;
         const orderAmount = orders.amount;
-
         // 책 재고 확인
         const bookAmount = await this.booksRepository.createQueryBuilder("books")
         .select()
         .where("id = :book_id", {book_id})
         .getOne()
+
         
-        if (bookAmount.amount < orders.amount) {
-            return new HttpException("재고 부족", HttpStatus.FORBIDDEN)
-        } else {
-            console.log("재고 있음")
+        if (bookAmount && bookAmount.amount < orders.amount) {
+            throw new HttpException("재고 부족", HttpStatus.BAD_REQUEST)
         }
 
         const totalPrice = bookAmount.price * orders.amount;
@@ -44,9 +42,7 @@ export class OrdersService {
         
         // 유저 잔고 확인
         if(user.point < totalPrice){
-            return new HttpException("잔고 부족", HttpStatus.FORBIDDEN)
-        } else {
-            console.log("잔고 있음")
+            throw new HttpException("잔액 부족", HttpStatus.BAD_REQUEST)
         }
         
         // 구매 책 재고 --
@@ -87,9 +83,11 @@ export class OrdersService {
         .where("id = :order_id", {order_id})
         .andWhere("user_id = :user_id", {user_id})
         .getOne();
-
+        
         if (!order) {
-            return new HttpException("유효하지 않은 거래입니다.", HttpStatus.FORBIDDEN)
+            throw new HttpException("유효하지 않은 거래입니다.", HttpStatus.BAD_REQUEST)
+        } else if (order.stat == "C") {
+            throw new HttpException("이미 취소되었습니다.", HttpStatus.BAD_REQUEST)
         }
 
         const book_id = order.book_id;
