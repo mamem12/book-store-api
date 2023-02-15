@@ -7,13 +7,9 @@ import { OrdersService } from 'src/order/orders.service';
 
 @Controller('customer')
 export class CustomerController {
-    // - 주문취소
-    // - 주문목록
-    
     constructor(
-        private readonly booksService : BooksService,
         private readonly ordersService : OrdersService,
-        ) {}
+    ) {}
         
     // - 주문
     @Post("/order")
@@ -23,14 +19,14 @@ export class CustomerController {
         order.user_id = req.user.userId;
         return this.ordersService.order(order);
     }
-
+    // - 주문취소
     @Delete("/cancel/:id")
     @UseGuards(JwtAuthGuard)
     cancel(@Param("id") order_id : number, @Req() req) {
         
         return this.ordersService.cancel(order_id, req.user.userId)
     }
-
+    // - 주문목록
     @Get("/orderlist")
     @UseGuards(JwtAuthGuard)
     orderList(@Req() req) {
