@@ -1,16 +1,36 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeORMConfig } from './config/typeorm.config';
-import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
-import { BooksModule } from './books/books.module';
-import { SellerModule } from './seller/seller.module';
-import { CustomerController } from './customer/customer.controller';
+import { Books } from './books/entities/books.entity';
 import { CustomerModule } from './customer/customer.module';
+import { Orders } from './order/entities/orders.entity';
 import { OrdersModule } from './order/orders.module';
+import { SellerModule } from './seller/seller.module';
+import { Users } from './user/entities/user.entity';
+import { UsersModule } from './user/users.module';
+
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forRoot(typeORMConfig), AuthModule, SellerModule, CustomerModule, OrdersModule],
+  imports: [
+    UsersModule, 
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'mysql', 
+      host: process.env.DATABASE_HOST,
+      port: Number(process.env.DATABASE_PORT),
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      entities: [Users, Books, Orders], // Entity 연결
+      synchronize: true,
+    }), 
+    AuthModule, 
+    SellerModule, 
+    CustomerModule, 
+    OrdersModule,
+    
+  ],
   controllers: [],
   providers: [],
 })
