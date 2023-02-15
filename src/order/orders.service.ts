@@ -81,8 +81,6 @@ export class OrdersService {
     }
 
     async cancel(order_id : number, user_id : number) {
-        console.log(user_id)
-        console.log(order_id)
 
         const order = await this.ordersRepository.createQueryBuilder("order")
         .select()
@@ -116,15 +114,7 @@ export class OrdersService {
         .execute();
 
         // 포인트 반환
-        console.log(`book price ${bookInfo.price}`)
-        console.log(`order amount ${order.amount}`)
-        console.log(`user have point ${userInfo.point}`)
-        
-        const totalOrderPoint = bookInfo.price * order.amount;
-        console.log(`total order price ${totalOrderPoint}`);
-        
-        const rePoint = userInfo.point + totalOrderPoint;
-        console.log(`return point ${rePoint}`)
+        const rePoint = (bookInfo.price * order.amount) + userInfo.point;
 
         await this.usersRepository.createQueryBuilder("user")
         .update()
