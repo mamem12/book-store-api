@@ -9,4 +9,5 @@ import { SellerController } from './seller.controller';
   imports : [BooksModule, MulterModule.register({dest:"./images"})]
   // imports : [BooksModule, MulterModule.register()]
 })
+
 export class SellerModule {}

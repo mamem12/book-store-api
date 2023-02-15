@@ -11,7 +11,7 @@ export class BooksService {
     constructor(
         @InjectRepository(Books)
         private booksRepository: Repository<Books>,
-        @InjectRepository(Books)
+        @InjectRepository(Users)
         private usersRepository: Repository<Users>,
     ) {}
 
@@ -21,6 +21,9 @@ export class BooksService {
             .select()
             .where("user.id = :id", {id})
             .getOne();
+
+        console.log(isSeller)
+        console.log(isSeller.category)
 
         if(isSeller.category && isSeller.category == "s") {
             
@@ -48,8 +51,23 @@ export class BooksService {
 
     }
 
-    async stocks(id : number) {
+    async stocksById(id : number, booksId : number) {
+        const stockResult = await this.booksRepository.createQueryBuilder("books")
+        .select()
+        .where("books.user_id = :id", {id})
+        .andWhere("books.id = :booksId", {booksId})
+        .getOne()
 
+        return {"재고" : stockResult.amount};
+    }
+
+    async stocks(id : number) {
+        const stockResult = await this.booksRepository.createQueryBuilder("books")
+        .select()
+        .where("books.user_id = :id", {id})
+        .getMany()
+
+        return stockResult;
     }
 
 
